@@ -14,12 +14,13 @@ namespace SpaceBox
 {
     public partial class Form2 : Form
     {
+        //variables
         int movimientos = 0;
         int espacios = 0;
         int puntaje = 0;
         Nave nave;
 
-        char[,] juego = new char[14, 14];
+        char[,] juego = new char[15, 15];
         
         public Form2()
         {
@@ -61,16 +62,17 @@ namespace SpaceBox
                     {
                         while (!reader.EndOfStream)
                         {
-                            fileContent = reader.ReadLine();
-                            if (fileContent.Length == 14)
+                            fileContent = reader.ReadLine(); //lee linea por linea
+                            if (fileContent.Length == 15)
                             {
+                                //recorro la linea
                                 for (int i = 0; i < fileContent.Length; i++)
                                 {
                                     if (fileContent.ElementAt(i) == 'A' || fileContent.ElementAt(i) == 'B' || fileContent.ElementAt(i) == 'C' || fileContent.ElementAt(i) == 'D' || fileContent.ElementAt(i) == 'E')
                                     {
                                         if (fileContent.ElementAt(i) == 'B')
                                         {
-                                            nave = new Nave(filas, i);
+                                            nave = new Nave(filas, i); //creo la nave
                                             cuentaNave++;
                                         }
                                         if (fileContent.ElementAt(i) == 'D')
@@ -89,20 +91,23 @@ namespace SpaceBox
                             else
                             {
                                 estaBien = false;
-                                MessageBox.Show("Linea con longitud diferente a 14");
+                                MessageBox.Show("Linea con longitud diferente a 15");
                             }
                             filas++;
                         }
-                        if (!(filas == 14))
+                        //condicion si hay mas o menos filas
+                        if (!(filas == 15))
                         {
                             estaBien = false;
-                            MessageBox.Show("Archivo con cantidad de lineas diferente a 14");
+                            MessageBox.Show("Archivo con cantidad de lineas diferente a 15");
                         }
+                        //condicion para ver si hay solo 1 tierra
                         if (cuentaTierra != 1)
                         {
                             estaBien = false;
                             MessageBox.Show("Ninguna o mas de una tierra");
                         }
+                        //concioon para ver si hay o no hay nave
                         if (cuentaNave != 1)
                         {
                             estaBien = false;
@@ -111,6 +116,7 @@ namespace SpaceBox
                     }
                 }
             }
+
             if (estaBien)
             {
                 DibujarDGV();
@@ -124,20 +130,24 @@ namespace SpaceBox
         }
         public void DibujarDGV()
         {
-            dataGridView1.ReadOnly = true;
-            dataGridView1.Rows.Clear();
+            dataGridView1.ReadOnly = true; //Ponerlo en solo leer
+            dataGridView1.Rows.Clear(); 
             dataGridView1.Columns.Clear();
-            for (int i = 0; i < 14; i++)
+            //AGREGAR COLUMNAS
+            for (int i = 0; i < 15; i++)
             {
                 dataGridView1.Columns.Add(i.ToString(), "");
                 dataGridView1.Columns[i].Width = 35;
             }
-            
-            dataGridView1.Rows.Add(14);
-            for (int i = 0; i < 14; i++)
+            //AGREGAS LAS FILAS
+            dataGridView1.Rows.Add(15);
+
+            //RECORRER DGV
+            for (int i = 0; i < 15; i++)
             {
-                for (int j = 0; j < 14; j++)
+                for (int j = 0; j < 15; j++)
                 {
+                    //ver que es en el juego y poner en el data grid view
                     if (juego[i, j] == 'A')
                     {
                         dataGridView1.Rows[i].Cells[j].Value = "";
@@ -166,6 +176,7 @@ namespace SpaceBox
                     
                 }
             }
+            //colocar el punteo, numero de movimientos y los espacios recorridos
             labelPunteoCristales.Text = puntaje.ToString();
             labelNoMovimientos.Text = movimientos.ToString();
             labelespacioRecorrido.Text = espacios.ToString();
@@ -180,12 +191,15 @@ namespace SpaceBox
                 {
                     while (estaActivo)
                     {
+                        //asigno coordenadas x y y
                         int y = nave.getX();
                         int x = nave.getY();
+                        //condicion par ver si el siguiente es asteroide
                         if ((juego[y - 1, x] == 'C'))
                         {
                             estaActivo = false;
                         }
+                        //condicion para ver si el siguiente es tierra
                         else if ((juego[y - 1, x] == 'D'))
                         {
                             MessageBox.Show("Ha llegado a tierra");
@@ -193,16 +207,17 @@ namespace SpaceBox
                         }
                         else
                         {
+                            //condicion para ver si el siguiente es cristal
                             if ((juego[y - 1, x] == 'E'))
                             {
                                 puntaje += 100;
                             }
-                            juego[y - 1, x] = 'B';
-                            nave.setxy(y - 1, x);
+                            juego[y - 1, x] = 'B'; //asigno nave a la posicion siguiente en la matriz
+                            nave.setxy(y - 1, x); //asigno coordenadas a la nave
                             juego[y, x] = 'Z';
                             
                         }
-                        espacios += 1;
+                        espacios += 1; //recorro 1 espacio
                     }
                 }
                 if (e.KeyCode == Keys.S)
